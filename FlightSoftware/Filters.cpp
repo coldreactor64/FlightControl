@@ -149,7 +149,13 @@ void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy, 
 // the error between estimated reference vectors and measured ones.
 void MahonyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat)
 {
-  // short name local variable for readability
+  gx += 250.0f; gy -= 30.0f; gz += 40.0f;//Calibration Values, yours may be different!
+  
+  ax /= 2048.0f;   ay /= 2048.0f;   az /= 2048.0f;//Divide by scaling factor
+  gx /= 131;   gy /= 131;   gz /= 131;
+  
+  gx *= PI/180.0f; gy *= PI/180.0f; gz *= PI/180.0f; //do trig stuff
+
   float q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];
   float norm;
   float hx, hy, bx, bz;

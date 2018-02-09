@@ -24,7 +24,7 @@ float yaw, pitch, roll;
 void setup(){
   Wire.begin();
 
-  Serial.begin(115200);
+  Serial.begin(9600);
   if(!setupSensors()){
   Serial.print(".");
   }
@@ -43,7 +43,7 @@ readMag();
   Now = micros();
   deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
 
-MahonyQuaternionUpdate(fAcX, fAcY, fAcZ, fGyX*PI/180.0f, fGyY*PI/180.0f, fGyZ*PI/180.0f, MgX, MgY, MgZ, deltat);
+MahonyQuaternionUpdate(fAcX, fAcY, fAcZ, fGyX, fGyY, fGyZ, MgX, MgY, MgZ, deltat);
 lastUpdate = micros();
 yaw = *getYPR();
 pitch = *(getYPR()+1);
@@ -160,16 +160,7 @@ void readGyroAccel(){
   fGyZ = GyZ;
   //fAcX -= 800.0f;//FYI I just found what seemed to be the best 
   //fAcZ += 1449.0f;//and got me the most stable data with the noise centered around the 0
-  fGyX += 250.0f;//Your values may be different
-  fGyY -= 30.0f;
-  fGyZ += 40.0f;
-//divide it by scaling factor as per datasheet
-  fAcX /= 2048.0f;
-  fAcY /= 2048.0f;
-  fAcZ /= 2048.0f;
-  fGyX /= 131;
-  fGyY /= 131;
-  fGyZ /= 131;
+
 }
 
 
