@@ -18,12 +18,13 @@ float deltat = 0.0f;        // integration interval for both filter scheme
 //#define OutputGyro
 //#define OutputMag
 #define OutputYawPitchRoll
+//#define OutputJSON
 //#define OutputQuat
 float yaw, pitch, roll;
 void setup(){
   Wire.begin();
 
-  Serial.begin(9600);
+  Serial.begin(115200);
   if(!setupSensors()){
   Serial.print(".");
   }
@@ -94,7 +95,20 @@ Serial.print(pitch);
 Serial.print("\t");
 Serial.println(roll);
 #endif
+#ifdef OutputJSON
 
+String json;
+json = "{\"q0\":";
+json = json + *getQ();
+json = json + ",\"q1\":";
+json = json + *(getQ()+1);
+json = json + ",\"q2\":";
+json = json + *(getQ()+2);
+json = json + ",\"q3\":";
+json = json + *(getQ()+3);
+json = json + "}";
+Serial.println(json);
+#endif
 }
 
 bool setupSensors() {
