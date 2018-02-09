@@ -42,9 +42,22 @@ static float eInt[3] = {0.0f, 0.0f, 0.0f};
 // Vector to hold quaternion
 static float q[4] = {1.0f, 0.0f, 0.0f, 0.0f};
 
-void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat)
+void MadgwickQuaternionUpdate(int16_t Iax, int16_t Iay, int16_t Iaz, int16_t Igx, int16_t Igy, int16_t Igz, float mx, float my, float mz, float deltat)
 {
-  // short name local variable for readability
+
+  float ax = Iax;
+  float ay = Iay;
+  float az = Iaz;
+  float gx = Igx;
+  float gy = Igy;
+  float gz = Igz;
+  
+  gx += 250.0f; gy -= 30.0f; gz += 40.0f;//Calibration Values, yours may be different!
+  
+  ax /= 2048.0f;   ay /= 2048.0f;   az /= 2048.0f;//Divide by scaling factor
+  gx /= 131;   gy /= 131;   gz /= 131;
+  
+  gx *= PI/180.0f; gy *= PI/180.0f; gz *= PI/180.0f; //do trig stuff
   float q1 = q[0], q2 = q[1], q3 = q[2], q4 = q[3];
   float norm;
   float hx, hy, _2bx, _2bz;
@@ -147,8 +160,15 @@ void MadgwickQuaternionUpdate(float ax, float ay, float az, float gx, float gy, 
 
 // Similar to Madgwick scheme but uses proportional and integral filtering on
 // the error between estimated reference vectors and measured ones.
-void MahonyQuaternionUpdate(float ax, float ay, float az, float gx, float gy, float gz, float mx, float my, float mz, float deltat)
+void MahonyQuaternionUpdate(int16_t Iax, int16_t Iay, int16_t Iaz, int16_t Igx, int16_t Igy, int16_t Igz, float mx, float my, float mz, float deltat)
 {
+  float ax = Iax;
+  float ay = Iay;
+  float az = Iaz;
+  float gx = Igx;
+  float gy = Igy;
+  float gz = Igz;
+  
   gx += 250.0f; gy -= 30.0f; gz += 40.0f;//Calibration Values, yours may be different!
   
   ax /= 2048.0f;   ay /= 2048.0f;   az /= 2048.0f;//Divide by scaling factor
