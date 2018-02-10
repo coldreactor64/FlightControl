@@ -14,27 +14,17 @@ int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
 float lastUpdate = 0;    // used to calculate integration interval
 float Now = 0;           // used to calculate integration interval
 float deltat = 0.0f;        // integration interval for both filter scheme
-//#define OutputAccel
-//#define OutputGyro
-//#define OutputMag
 //#define OutputYawPitchRoll
 #define OutputJSON
 //#define OutputQuat
 float yaw, pitch, roll;
 void setup(){
   Wire.begin();
-
   Serial.begin(9600);
   if(!setupSensors()){
   Serial.print(".");
   }
   Serial.println("Sensors Started");
-//  mag.begin();
- // Wire.beginTransmission(MPU);
-//  Wire.write(0x6B);  // PWR_MGMT_1 register
-//  Wire.write(0);     // set to zero (wakes up the MPU-6050)
-//  Wire.endTransmission(true);
-}
 
 void loop(){
 
@@ -131,13 +121,6 @@ void readGyroAccel(){
 
 
 void readMag(){
-/*sensors_event_t event; 
-mag.getEvent(&event);
-
-MgX = event.magnetic.x;
-MgY = event.magnetic.y;
-MgZ = event.magnetic.z;
-*/
   Wire.beginTransmission(Mag);//Address of HMC5883L Magnetometer
   Wire.write(0x3);  // starting with register 0x3B (ACCEL_XOUT_H)
   Wire.endTransmission(false);
