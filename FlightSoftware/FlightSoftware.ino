@@ -12,6 +12,7 @@ float deltat = 0.0f;        // integration interval for both filter scheme
 //#define OutputYawPitchRoll
 #define OutputJSON
 //#define OutputQuat
+//#define SensorOutput
 float yaw, pitch, roll;
 
 
@@ -70,6 +71,20 @@ json = json + ",\"q3\":";
 json = json + *(getQ()+3);
 json = json + "}";
 Serial.println(json);
+#endif
+
+#ifdef SensorOutput
+Serial.print(AcX);
+Serial.print("\t");
+Serial.print(AcY);
+Serial.print("\t");
+Serial.print(AcZ);
+Serial.print("\t");
+Serial.print(MgX);
+Serial.print("\t");
+Serial.print(MgY);
+Serial.print("\t");
+Serial.println(MgZ);
 #endif
 }
 
