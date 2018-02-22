@@ -2,15 +2,10 @@
 #include <SPI.h>
 #include <SD.h>
 #include "Filters.h"
-//#include <I2C.h>
-//#include <Adafruit_Sensor.h>
-//#include <Adafruit_HMC5883_U.h>
 
 const int MPU=0x68;  // I2C address of the MPU-6050
 const int Mag = 0x1E;
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
-
-
 float lastUpdate = 0;    // used to calculate integration interval
 float Now = 0;           // used to calculate integration interval
 float deltat = 0.0f;        // integration interval for both filter scheme
@@ -18,20 +13,23 @@ float deltat = 0.0f;        // integration interval for both filter scheme
 #define OutputJSON
 //#define OutputQuat
 float yaw, pitch, roll;
+
+
 void setup(){
-  Wire.begin();
-  Serial.begin(9600);
-  if(!setupSensors()){
+Wire.begin();
+Serial.begin(9600);
+if(!setupSensors()){
   Serial.print(".");
-  }
-  Serial.println("Sensors Started");
+}
+
+}
+Serial.println("Sensors Started");
 
 void loop(){
-
 readGyroAccel();
 readMag();
-  Now = micros();
-  deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
+Now = micros();
+deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapsed since last filter update
 
 MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
 lastUpdate = micros();
