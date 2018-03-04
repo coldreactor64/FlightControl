@@ -1,8 +1,7 @@
+#include <PID_v1.h>
 #include<Wire.h>
 #include <SPI.h>
-#include <SD.h>
 #include "Filters.h"
-
 const int MPU=0x68;  // I2C address of the MPU-6050
 const int Mag = 0x1E;
 int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
@@ -22,9 +21,9 @@ Serial.begin(9600);
 if(!setupSensors()){
   Serial.print(".");
 }
-
-}
 Serial.println("Sensors Started");
+}
+
 
 void loop(){
 readGyroAccel();
