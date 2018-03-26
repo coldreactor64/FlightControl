@@ -3,8 +3,13 @@
 #include <SPI.h>
 #include "Filters.h"
 #include "Guidance.h"
+
+#define MPU9250
+//#define MPU6050HMC
+
 const int MPU=0x68;  // I2C address of the MPU-6050
 const int Mag = 0x1E;
+const int Ahk = 0x0C;
 int16_t rAcX,rAcY,rAcZ,rTmp,rGyX,rGyY,rGyZ,rMgX,rMgY,rMgZ;
 float AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
 float lastUpdate = 0;    // used to calculate integration interval
@@ -14,6 +19,7 @@ float deltat = 0.0f;        // integration interval for both filter scheme
 //#define OutputJSON
 //#define OutputQuat
 #define SensorOutput
+
 float yaw, pitch, roll;
 float x = 8;
 Guidance Guidance(&AcX,&AcY,&AcZ,&GyX,&GyY,&GyZ,&MgX,&MgY,&MgZ, &deltat, 1);
@@ -54,6 +60,29 @@ json = json + *(getQ()+3);
 json = json + "}";
 Serial.println(json);
 #endif
+
+#ifdef SensorOutput
+Serial.print(AcX);
+Serial.print("\t");
+Serial.print(AcY);
+Serial.print("\t");
+Serial.print(AcZ);
+Serial.print("\t");
+Serial.print(GyX);
+Serial.print("\t");
+Serial.print(GyY);
+Serial.print("\t");
+Serial.print(GyZ);
+Serial.print("\t");
+Serial.print(MgX);
+Serial.print("\t");
+Serial.print(MgY);
+Serial.print("\t");
+Serial.print(MgZ);
+Serial.println("\t");
+#endif
+
+
 }
 
 bool setupSensors() {
@@ -71,13 +100,21 @@ bool setupSensors() {
   Wire.write(0x37);  // PWR_MGMT_1 register
   Wire.write(0x02);     // set to zero (wakes up the MPU-6050)
   Wire.endTransmission(true);
-
+#ifdef MPU6050HMC
   Wire.beginTransmission(Mag); //open communication with HMC5883
   Wire.write(0x02); //select mode register
   Wire.write(0x00); //continuous measurement mode
   Wire.endTransmission();
+#endif
 
- Wire.beginTransmission(MPU); //Set Acceleration to +-16g
+#ifdef MPU9250
+  Wire.beginTransmission(Ahk); //open communication with AHK Magnetometer
+  Wire.write(0x0A); //select mode register
+  Wire.write(0x16); //continuous measurement mode and 16bit resolutin
+  Wire.endTransmission();
+#endif
+
+  Wire.beginTransmission(MPU); //Set Acceleration to +-16g
   Wire.write(0x1C);//Register
   Wire.write(0x18);//Afs = 3
   Wire.endTransmission(); 
@@ -108,6 +145,7 @@ void readGyroAccel(){
 }
 
 void readMag(){
+  #ifdef MPU6050HMC
   Wire.beginTransmission(Mag);//Address of HMC5883L Magnetometer
   Wire.write(0x3);  // starting with register 0x3B (ACCEL_XOUT_H)
   Wire.endTransmission(false);
@@ -118,6 +156,19 @@ void readMag(){
   MgX = (float) rMgX; //Convert all the int16_t's to floats for input
   MgY = (float) rMgY;
   MgZ = (float) rMgZ;
+#endif
 
+#ifdef MPU9250
+  Wire.beginTransmission(Ahk);//Address of HMC5883L Magnetometer
+  Wire.write(0x3);  // starting with register 0x3
+  Wire.endTransmission(false);
+  Wire.requestFrom(Mag,6,true);
+  rMgX=Wire.read()<<8|Wire.read();//read registar 3 and 4  
+  rMgZ=Wire.read()<<8|Wire.read();//read registar 5 and 6
+  rMgY=Wire.read()<<8|Wire.read();//read registar 6 and 7
+  MgX = (float) rMgX; //Convert all the int16_t's to floats for input
+  MgY = (float) rMgY;
+  MgZ = (float) rMgZ;
+#endif
 }
 
