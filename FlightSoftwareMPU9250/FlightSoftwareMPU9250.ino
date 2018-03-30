@@ -11,7 +11,7 @@
 const int MPU=0x68;  // I2C address of the MPU-6050
 const int Mag = 0x1E;
 const int Ahk = 0x0C;
-int16_t rAcX,rAcY,rAcZ,rTmp,rGyX,rGyY,rGyZ,rMgX,rMgY,rMgZ;
+int16_t rAcX,rAcY,rAcZ,rTmp,rGyX,rGyY,rGyZ,rMgX,rMgY,rMgZ,mx,my,mz;
 float AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
 float lastUpdate = 0;    // used to calculate integration interval
 float Now = 0;           // used to calculate integration interval
@@ -75,11 +75,11 @@ Serial.print(GyY);
 Serial.print("\t");
 Serial.print(GyZ);
 Serial.print("\t");
-Serial.print(rMgX);
+Serial.print(mx);
 Serial.print("\t");
-Serial.print(rMgY);
+Serial.print(my);
 Serial.print("\t");
-Serial.print(rMgZ);
+Serial.print(mz);
 Serial.println("\t");
 #endif
 
@@ -179,8 +179,8 @@ void readMag()
   // Create 16 bits values from 8 bits data
   
   // Magnetometer
-  int16_t mx=-(Mag[3]<<8 | Mag[2]);
-  int16_t my=-(Mag[1]<<8 | Mag[0]);
-  int16_t mz=-(Mag[5]<<8 | Mag[4]);
+  mx=-(Mag[3]<<8 | Mag[2]);
+  my=-(Mag[1]<<8 | Mag[0]);
+  mz=-(Mag[5]<<8 | Mag[4]);
 }
 
