@@ -82,7 +82,14 @@ Serial.print("\t");
 Serial.print(mz);
 Serial.println("\t");
 #endif
-
+  
+#ifdef SensorOutput
+Serial.print(Guidance.Yaw);
+Serial.print("\t");
+Serial.print(Guidance.Pitch);
+Serial.print("\t");
+Serial.println(Guidance.Roll);
+#endif
 
 }
 
