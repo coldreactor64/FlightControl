@@ -146,21 +146,6 @@ void readGyroAccel(){
   GyZ = (float) rGyZ;
 
 }
-#ifdef MPU6050HMC
-void readMag(){
-  Wire.beginTransmission(Mag);//Address of HMC5883L Magnetometer
-  Wire.write(0x3);  // starting with register 0x3B (ACCEL_XOUT_H)
-  Wire.endTransmission(false);
-  Wire.requestFrom(Mag,6,true);
-  rMgX=Wire.read()<<8|Wire.read();//read registar 3 and 4  
-  rMgZ=Wire.read()<<8|Wire.read();//read registar 5 and 6
-  rMgY=Wire.read()<<8|Wire.read();//read registar 6 and 7
-  MgX = (float) rMgX; //Convert all the int16_t's to floats for input
-  MgY = (float) rMgY;
-  MgZ = (float) rMgZ;
-}
-#endif
-
 
 void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
 {
@@ -176,7 +161,6 @@ void I2Cread(uint8_t Address, uint8_t Register, uint8_t Nbytes, uint8_t* Data)
     Data[index++]=Wire.read();
 }
 
-#ifdef MPU9250
 void readMag()
 {
   uint8_t ST1;
@@ -200,4 +184,3 @@ void readMag()
   int16_t mz=-(Mag[5]<<8 | Mag[4]);
 }
 
-#endif
