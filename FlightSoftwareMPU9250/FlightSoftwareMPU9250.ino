@@ -182,5 +182,8 @@ void readMag()
   mx=-(Mag[3]<<8 | Mag[2]);
   my=-(Mag[1]<<8 | Mag[0]);
   mz=-(Mag[5]<<8 | Mag[4]);
+  MgX = (float) mx; //Convert all the int16_t's to floats for input
+  MgY = (float) my;
+  MgZ = (float) mz;
 }
 
