@@ -1,9 +1,10 @@
 #include <Arduino.h>
-
+#include <Wire.h>
 class PID;
 class Servo;
 class String;
 class Serial;
+
 class Guidance  {
 public:    
     PID *YawPID;
@@ -13,8 +14,11 @@ public:
     double YawInput, PitchInput, RollInput;
     Guidance(float*, float*, float*, float*, float*, float*, float*, float*, float*, float*, int);//Initialization Method
     double YawSetpoint, PitchSetpoint, RollSetpoint; //Setpoints to the direction you want the rocket to fly 
+    int error;
     void PIDGuidance();
+    int SensorDetect(int);
     float Yaw, Pitch, Roll;
+
     double YawOutput, PitchOutput, RollOutput, PitchOpp, RollOpp, PitchDiff, RollDiff;
     float AcX,AcY,AcZ,GyX,GyY,GyZ,MgX,MgY,MgZ,deltat;
     float *pax, *pay, *paz, *pgx, *pgy, *pgz, *pmx, *pmy, *pmz, *pdeltat; //the pointers to the main values

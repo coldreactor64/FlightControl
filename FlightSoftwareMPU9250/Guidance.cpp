@@ -115,3 +115,10 @@ Servo4->write(90 + Servo4Offset);
 };
 
 
+int Guidance::SensorDetect(int address){
+Wire.beginTransmission(address);
+error = Wire.endTransmission();
+return error;
+};
+
+

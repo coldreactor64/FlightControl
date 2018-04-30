@@ -8,8 +8,8 @@ int16_t AcX,AcY,AcZ,Tmp,GyX,GyY,GyZ,MgX,MgY,MgZ;
 float lastUpdate = 0;    // used to calculate integration interval
 float Now = 0;           // used to calculate integration interval
 float deltat = 0.0f;        // integration interval for both filter scheme
-//#define OutputYawPitchRoll
-#define OutputJSON
+#define OutputYawPitchRoll
+//#define OutputJSON
 //#define OutputQuat
 //#define SensorOutput
 float yaw, pitch, roll;

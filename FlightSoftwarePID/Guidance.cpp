@@ -3,14 +3,20 @@
 #include "Arduino.h"
 #include "Filters.h"
 #include <Servo.h>
+
+
 Servo Servo1, Servo2, Servo3, Servo4;
 
+Guidance::Guidance(int imusensor){
+IMUSensor = imusensor;
+if (IMUSensor == 0){
+IMU = new MPU6050HMC();
+}
+if (IMUSensor == 1){
+MPU9250IMU = new MPU9250();
+}
 
-Guidance::Guidance(float* ax, float* ay, float* az, float* gx, float* gy, float* gz, float* mx, float* my, float* mz, float* DeltaT, int filterMode){ 
-pax = ax; pay = ay; paz = az;//Pointers to each of these values
-pgx = gx; pgy = gy; pgz = gz;//so we can get them when needed
-pmx = mx; pmy = my; pmz = mz;  
-pdeltat = DeltaT;
+
 /*********Customization Values***********/ //Set these values for launch parameters
 YawKp = 1; YawKi = 0.05; YawKd = 0.25;
 PitchKp = 1; PitchKi = 0.05; PitchKd = 0.25;//Also set some preliminary conservative tunings
@@ -20,12 +26,8 @@ YawSetpoint = 0;
 PitchSetpoint = 90;
 RollSetpoint = 0;
 /*Servo Settings*/
-//Offsets
-Servo1Offset = 0;//apply offsets to servo
-Servo2Offset = 0;//to get make them straight
-Servo3Offset = 0;
-Servo4Offset = 0;
-Servo1Pin = 3; Servo2Pin = 5; Servo3Pin = 6; Servo4Pin = 9;// Change this to correct pins for your board
+Servo1Offset = 0; Servo2Offset = 0; Servo3Offset = 0; Servo4Offset = 0;
+Servo1Pin = 3; Servo2Pin = 5; Servo3Pin = 6; Servo4Pin = 9;
 /*Servo Numbering and axis
  *     Pitch
  *       1
@@ -59,17 +61,15 @@ Servo1 = new Servo; Servo2 = new Servo; Servo3 = new Servo; Servo4 = new Servo;
 void Guidance::PIDGuidance(){
 unsigned long currentMillis = millis();
 
-AcX = *pax; AcY = *pay; AcZ = *paz;
-GyX = *pgx; GyY = *pgy; GyZ = *pgz;
-MgX = *pmx; MgY = *pmy; MgZ = *pmz;
-deltat = *pdeltat;
+if (IMUSensor == 0){
+IMU->Update();
 
-if (filterMode == 0){
-MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
 }
-else if(filterMode == 1){
-MadgwickQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
+
+if (IMUSensor == 1){
+MPU9250IMU->Update();  
 }
+
 Yaw = *getypr(); //Get YPR
 Pitch = *(getypr()+1);
 Roll = *(getypr()+2);

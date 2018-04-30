@@ -61,28 +61,12 @@ json = json + *(getQ()+3);
 json = json + "}";
 Serial.println(json);
 #endif
-
-#ifdef SensorOutput
-Serial.print(AcX);
+Serial.print(Guidance.Yaw);
 Serial.print("\t");
-Serial.print(AcY);
+Serial.print(Guidance.Pitch);
 Serial.print("\t");
-Serial.print(AcZ);
-Serial.print("\t");
-Serial.print(GyX);
-Serial.print("\t");
-Serial.print(GyY);
-Serial.print("\t");
-Serial.print(GyZ);
-Serial.print("\t");
-Serial.print(mx);
-Serial.print("\t");
-Serial.print(my);
-Serial.print("\t");
-Serial.print(mz);
-Serial.println("\t");
-#endif
-  
+Serial.println(Guidance.Roll);
+/*
 #ifdef SensorOutput
 Serial.print(Guidance.Yaw);
 Serial.print("\t");
@@ -90,14 +74,17 @@ Serial.print(Guidance.Pitch);
 Serial.print("\t");
 Serial.println(Guidance.Roll);
 #endif
-
+*/
 }
 
 bool setupSensors() {
-  Wire.beginTransmission(MPU);
-int error = Wire.endTransmission();
+  int error = Guidance.SensorDetect(MPU);
   if (error == 0){
   Serial.println("MPU is found");
+  delay(1000);
+  }
+  else{
+  Serial.println("MPU not found");
   }
   Wire.beginTransmission(MPU);
   Wire.write(0x6B);  // PWR_MGMT_1 register
@@ -173,22 +160,26 @@ void readMag()
   uint8_t ST1;
   do
   {
-    I2Cread(MAG_ADDRESS,0x02,1,&ST1);
+   // I2Cread(MAG_ADDRESS,0x02,1,&ST1);
+    Wire.beginTransmission(MAG_ADDRESS);
+    Wire.write(0x02);
+    Wire.endTransmission();
+    Wire.requestFrom(MAG_ADDRESS, 1);
+    ST1 = Wire.read();
     Serial.println(".");
   }
   while (!(ST1&0x01));
 
   // Read magnetometer data  
   uint8_t Mag[7];  
-  I2Cread(MAG_ADDRESS,0x03,7,Mag);
-  
-
-  // Create 16 bits values from 8 bits data
-  
-  // Magnetometer
-  mx=-(Mag[3]<<8 | Mag[2]);
-  my=-(Mag[1]<<8 | Mag[0]);
-  mz=-(Mag[5]<<8 | Mag[4]);
+  //I2Cread(MAG_ADDRESS,0x03,7,Mag);
+    Wire.beginTransmission(MAG_ADDRESS);
+    Wire.write(0x03);
+    Wire.endTransmission();
+    Wire.requestFrom(MAG_ADDRESS, 7);
+    mx=Wire.read()<<8|Wire.read();   
+    my=Wire.read()<<8|Wire.read();
+    mz=Wire.read()<<8|Wire.read();
   MgX = (float) mx; //Convert all the int16_t's to floats for input
   MgY = (float) my;
   MgZ = (float) mz;
