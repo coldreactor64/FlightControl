@@ -4,6 +4,14 @@
 #include "Filters.h"
 #include <Servo.h>
 
+/*Servo Numbering and axis
+ *     Pitch
+ *       1
+ *     4   2  Roll
+ *       3
+ * Yaw is rotation in the rocket spin.
+ * Obv if you want to move them around you can in the code below to assign one to another
+ */
 
 Servo Servo1, Servo2, Servo3, Servo4;
 
@@ -28,14 +36,6 @@ RollSetpoint = 0;
 /*Servo Settings*/
 Servo1Offset = 0; Servo2Offset = 0; Servo3Offset = 0; Servo4Offset = 0;
 Servo1Pin = 3; Servo2Pin = 5; Servo3Pin = 6; Servo4Pin = 9;
-/*Servo Numbering and axis
- *     Pitch
- *       1
- *     4   2  Roll
- *       3
- * Yaw is rotation in the rocket spin.
- * Obv if you want to move them around you can in the code below to assign one to another
- */
 
 /*************************/
 YawPID = new PID(&YawInput, &YawOutput, &YawSetpoint, YawKp, YawKi, YawKd, DIRECT);
@@ -63,7 +63,6 @@ unsigned long currentMillis = millis();
 
 if (IMUSensor == 0){
 IMU->Update();
-
 }
 
 if (IMUSensor == 1){
@@ -73,23 +72,23 @@ MPU9250IMU->Update();
 Yaw = *getypr(); //Get YPR
 Pitch = *(getypr()+1);
 Roll = *(getypr()+2);
-YawInput = (double) Yaw;//Change to double to put in the PID controller
-PitchInput = (double) Pitch;
-RollInput = (double) Roll;
+YawInput = (double) Yaw; PitchInput = (double) Pitch; RollInput = (double) Roll;//Change to double to put in the PID controller
 
-if(Roll < -50 && currentMillis > 8000 || Roll > 50 && currentMillis > 5000){
+
+
+if(Roll < -50 && currentMillis > 8000 || Roll > 50 && currentMillis > 8000){
  aborten = true;
 }
-if(Pitch < -50 && currentMillis > 8000 || Pitch > 50 && currentMillis > 5000){
+if(Pitch < -50 && currentMillis > 8000 || Pitch > 50 && currentMillis > 8000){
  aborten = true;
 }
 if (aborten == true){
 
 
-Servo1->write(90+Servo1Offset); //write nominal straight position if it gets out of control
-Servo2->write(90+Servo2Offset);
-Servo3->write(90+Servo3Offset);
-Servo4->write(90+Servo4Offset);
+Servo1->write(90+Servo1Offset); Servo2->write(90+Servo2Offset); 
+Servo3->write(90+Servo3Offset); Servo4->write(90+Servo4Offset); //write nominal straight position if it gets out of control
+
+
 }
 else{
 

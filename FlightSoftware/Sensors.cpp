@@ -33,20 +33,19 @@ I2CReadNByte(MPU,0x3B,14,RawData);
   rGyX=-(RawData[8]<<8 | RawData[9]);
   rGyY=-(RawData[10]<<8 | RawData[11]);
   rGyZ=RawData[12]<<8 | RawData[13];
-  AcX = (float) rAcX;//Convert all the int16_t's to floats for input
-  AcY = (float) rAcY;
-  AcZ = (float) rAcZ;
+
+  AcX = (float) rAcX; AcY = (float) rAcY; AcZ = (float) rAcZ;//Convert all the int16_t's to floats for input
   Tmp = (float) rTmp;
-  GyX = (float) rGyX;
-  GyY = (float) rGyY;
-  GyZ = (float) rGyZ;
+  GyX = (float) rGyX; GyY = (float) rGyY; GyZ = (float) rGyZ;
+
+
 /****************Read Magnetometer***************/
 I2CReadNByte(HMC,0x03,7,RawMagData);
     rMgX=-(RawMagData[3]<<8 | RawMagData[2]);
     rMgY=-(RawMagData[1]<<8 | RawMagData[0]);
     rMgZ=-(RawMagData[5]<<8 | RawMagData[4]);
     MgX = (float) rMgX; //Convert all the int16_t's to floats for input
-    MgY = (float) rMgY;
+    
     MgZ = (float) rMgZ;
 /****************Filter Data***************/
 MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
@@ -104,9 +103,7 @@ I2CReadNByte(AK,0x03,7,RawMagData);
     rMgX=-(RawMagData[3]<<8 | RawMagData[2]);
     rMgY=-(RawMagData[1]<<8 | RawMagData[0]);
     rMgZ=-(RawMagData[5]<<8 | RawMagData[4]);
-    MgX = (float) rMgX; //Convert all the int16_t's to floats for input
-    MgY = (float) rMgY;
-    MgZ = (float) rMgZ;
+    MgX = (float) rMgX; MgY = (float) rMgY; MgZ = (float) rMgZ;//Convert all the int16_t's to floats for input
 /****************Filter Data***************/
 MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
 };
