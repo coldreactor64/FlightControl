@@ -7,18 +7,46 @@
 /*****MPU6050 and HMC5883L on AUX I2C/or same I2C Line******/
 
 MPU6050HMC::MPU6050HMC(){ //Setup the Sensors to be read
-while (!(startSensor()));
+
+
+bool StartStatus = startSensor();
+
+if (StartStatus = false){
+  Serial.println("Failed.");
+}
+
 };
 
 bool MPU6050HMC::startSensor(){ //Initialize the sensors
 Wire.begin();
+
+MPU6050StartStatus = sensorCheck(MPU);
+
+if (MPU6050StartStatus == false){
+  Serial.println("No MPU6050 Detected, please check wiring and try again.");
+}
+
+else if(MPU6050StartStatus == true){
 I2CwriteByte(MPU, 0x6B, 0);   // PWR_MGMT_1 register set to zero (wakes up the MPU-6050)
 I2CwriteByte(MPU, 0x6A, 0);   //Enable Slave mode prerequrisite to I2C Bypass mode
 I2CwriteByte(MPU, 0x37, 0x02);//I2C_Bypass Enable
 I2CwriteByte(HMC, 0x02, 0x00);//continuous measurement mode enable
 I2CwriteByte(MPU, 0x1C, 0x18);//Set Acceleration to +-16g by setting AFS = 3
-digitalWrite(LED_BUILTIN, HIGH);
-return true;
+}
+
+HMCStartStatus = sensorCheck(HMC);
+
+if (HMCStartStatus == false){
+  Serial.println("HMC5883L is not detected, please check wiring and try again");
+  return false;
+}
+
+else if(HMCStartStatus == true){
+  Serial.println("Sensors Started.");
+  return true;
+}
+
+
 };
 
 void MPU6050HMC::Update(){ //read the sensors and put them into the filters and return the values
@@ -59,20 +87,56 @@ MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
 /*****************************MPU9250 Class*******************************/
 
 
+
 MPU9250::MPU9250(){ //Setup the Sensors to be read
-while (!(startSensor()));
+bool StartStatus = startSensor();
+
+if (StartStatus = false){
+  Serial.println("Failed.");
+}
+
 };
 
 bool MPU9250::startSensor(){ //Initialize the sensors
 Wire.begin();
+
+MPU6050StartStatus = sensorCheck(MPU);
+
+if (MPU6050StartStatus == false){
+  Serial.println("No MPU9250 Detected, please check wiring and try again.");
+}
+else if(MPU6050StartStatus == true){
 I2CwriteByte(MPU, 0x6B, 0);   // PWR_MGMT_1 register set to zero (wakes up the MPU-6050)
 I2CwriteByte(MPU, 0x6A, 0);   //Enable Slave mode prerequrisite to I2C Bypass mode
 I2CwriteByte(MPU, 0x37, 0x02);//I2C_Bypass Enable
 I2CwriteByte(AK,0x0A,0x16);//Set Continuous Measurement Mode
 I2CwriteByte(MPU, 0x1C, 0x18);//Set Acceleration to +-16g by setting AFS = 3
 Serial.println("Sensors Started");
-return true;
+
+}
+
+AKStartStatus = sensorCheck(AK);
+
+if (AKStartStatus == false){
+  Serial.println("MPU9250 Magnetometer not detected, please check wiring.");
+  return false;
+}
+
+else if(AKStartStatus == true){
+  Serial.println("Sensors Started.");
+  return true;
+}
+
 };
+
+
+
+
+
+
+
+
+
 
 void MPU9250::Update(){ //read the sensors and put them into the filters and return the values
 Now = micros();
@@ -93,6 +157,7 @@ I2CReadNByte(MPU,0x3B,14,RawData);
   GyX = (float) rGyX;
   GyY = (float) rGyY;
   GyZ = (float) rGyZ;
+
 /****************Read Magnetometer***************/
 do
 {
@@ -107,8 +172,12 @@ I2CReadNByte(AK,0x03,7,RawMagData);
     MgX = (float) rMgX; //Convert all the int16_t's to floats for input
     MgY = (float) rMgY;
     MgZ = (float) rMgZ;
+
+
 /****************Filter Data***************/
+
 MahonyQuaternionUpdate(AcX, AcY, AcZ, GyX, GyY, GyZ, MgX, MgY, MgZ, deltat);
+
 };
 
 
@@ -135,4 +204,24 @@ void I2CwriteByte(uint8_t Address, uint8_t Register, uint8_t Data)
   Wire.write(Register);
   Wire.write(Data);
   Wire.endTransmission();
+}
+
+bool sensorCheck(uint8_t Address){
+
+  Wire.beginTransmission(Address);
+
+  byte i2cerror = Wire.endTransmission();
+
+  if (i2cerror == 0){
+    Serial.print("Sensor at ");
+    Serial.print(Address);
+    Serial.println(" Found");
+    return true;
+  }
+  else{
+    Serial.print("Sensor at ");
+    Serial.print(Address);
+    Serial.println(" Not Found!");
+    return false;
+  }
 }

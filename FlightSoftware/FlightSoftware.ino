@@ -7,13 +7,13 @@
 //#define OutputYawPitchRoll
 //#define OutputJSON
 //#define OutputQuat
-#define SensorOutput
-//#define CSVOutput
+//#define SensorOutput
+#define CSVOutput
 
 Guidance *Guidance1;
 
 void setup(){
-Serial.begin(250000);
+Serial.begin(9600);
 pinMode(LED_BUILTIN, OUTPUT);
 //Serial.println("Sensors Started");
 Guidance1 = new Guidance(1); // Make it 1 for MPU9250, 0 for MPU6050/HMC5883L
@@ -26,7 +26,7 @@ Guidance1->PIDGuidance();
 
 /*Debug Outputs*/
 #ifdef OutputJSON
-String json;
+String json; 
 json = "{\"q0\":";
 json = json + *getQ();
 json = json + ",\"q1\":";
@@ -65,4 +65,3 @@ Serial.println("\t");
 #endif
 
 }
-

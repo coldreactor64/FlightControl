@@ -8,6 +8,7 @@
 Servo Servo1, Servo2, Servo3, Servo4;
 
 Guidance::Guidance(int imusensor){
+
 IMUSensor = imusensor;
 if (IMUSensor == 0){
 IMU = new MPU6050HMC();
@@ -67,6 +68,7 @@ IMU->Update();
 }
 
 if (IMUSensor == 1){
+//Serial.println("Updating");
 MPU9250IMU->Update();  
 }
 
