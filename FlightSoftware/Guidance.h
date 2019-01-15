@@ -30,4 +30,5 @@ private:
     int Servo1Offset,Servo2Offset,Servo3Offset,Servo4Offset;
     int Servo1Pin, Servo2Pin, Servo3Pin, Servo4Pin;
     bool aborten;
+    byte byteRead;
 };

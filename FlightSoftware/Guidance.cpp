@@ -29,6 +29,7 @@ RollSetpoint = 0;
 /*Servo Settings*/
 Servo1Offset = 0; Servo2Offset = 0; Servo3Offset = 0; Servo4Offset = 0;
 Servo1Pin = 3; Servo2Pin = 5; Servo3Pin = 6; Servo4Pin = 9;
+
 /*Servo Numbering and axis
  *     Pitch
  *       1
@@ -60,6 +61,18 @@ Servo1 = new Servo; Servo2 = new Servo; Servo3 = new Servo; Servo4 = new Servo;
 
 
 void Guidance::PIDGuidance(){
+
+
+
+if (Serial.available()) {
+    /* read the most recent byte */
+
+    byteRead = Serial.read();
+    /*ECHO the value that was read, back to the serial port. */
+    Serial.print("Write:");
+    Serial.write(byteRead);
+}
+
 unsigned long currentMillis = millis();
 
 if (IMUSensor == 0){

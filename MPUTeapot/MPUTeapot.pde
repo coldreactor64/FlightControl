@@ -68,10 +68,10 @@ void setup() {
     println(Serial.list());
 
     // get the first available port (use EITHER this OR the specific port code below)
-    String portName = Serial.list()[0];
+    //String portName = Serial.list()[0];
     
     // get a specific serial port (use EITHER this OR the first-available code above)
-    //String portName = "COM4";
+    String portName = "COM6";
     
     // open the serial port
     port = new Serial(this, portName, 9600);
@@ -152,13 +152,7 @@ interval = millis();
                 q[2] = json.getFloat("q2");
                 q[3] = json.getFloat("q3");
                 
-                print(q[0]);
-                print("\t");
-                print(q[1]);
-                print("\t");
-                print(q[2]);
-                print("\t");
-                println(q[3]);
+
             } 
             catch ( Exception e ) {
                 e.printStackTrace();

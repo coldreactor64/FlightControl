@@ -55,12 +55,14 @@ deltat = ((Now - lastUpdate)/1000000.0f); // set integration time by time elapse
 lastUpdate = micros();
 /****************Read Gyro and Accelerometer from MPU6050***************/
 I2CReadNByte(MPU,0x3B,14,RawData);
+
   rAcX=-(RawData[0]<<8 | RawData[1]);
   rAcY=-(RawData[2]<<8 | RawData[3]);
   rAcZ=RawData[4]<<8 | RawData[5];
   rGyX=-(RawData[8]<<8 | RawData[9]);
   rGyY=-(RawData[10]<<8 | RawData[11]);
   rGyZ=RawData[12]<<8 | RawData[13];
+  
   AcX = (float) rAcX;//Convert all the int16_t's to floats for input
   AcY = (float) rAcY;
   AcZ = (float) rAcZ;
@@ -219,6 +221,7 @@ bool sensorCheck(uint8_t Address){
     return true;
   }
   else{
+    Serial.print(i2cerror);
     Serial.print("Sensor at ");
     Serial.print(Address);
     Serial.println(" Not Found!");
